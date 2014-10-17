@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Docker on RHEL7 -- 关于性能</title>
+
+		<meta name="description" content="Docker performance on RHEL7">
+		<meta name="author" content="caishu@redhat.com">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link id="favicon" rel="shortcut icon" href="favicon.ico" />
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/simple.css" id="theme">
+		<link rel="stylesheet" href="css/fonts.css">
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/cartodb.css">
+		
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1 style="padding-top:100px;">关于Docker性能</h1>
+					<br /><br /><br />
+					<h4><a href="www.caishu.name"/>蔡书</a> ( <a href="mailto:caishu@redhat.com">caishu@redhat.com</a> )</h4>
+					<h4><a href="http://www.caishu.name/ppt/cmcc/jboss-intro"/>2014-10-18</a></h4>
+				</section>
+				<section>
+					<h2 style="margin-left: -100px; margin-bottom: 10px">免责</h2>
+					<p style="margin-top:40px;">该材料提到的工具和结论是基于Docker运行于RHEL7的</p>
+					<pre>
+						<code>
+[root@caishu-rhel7 ~]# uname -a
+Linux 3.10.0-123.8.1.el7.x86_64 #1 SMP Mon Aug 11 13:37:49 EDT 2014 x86_64 x86_64 x86_64 GNU/Linux
+[root@caishu-rhel7 ~]# docker version
+Client version: 1.1.2
+Client API version: 1.13
+Go version (client): go1.3.1
+Git commit (client): d84a070/1.1.2
+Server version: 1.1.2
+Server API version: 1.13
+Go version (server): go1.3.1
+Git commit (server): d84a070/1.1.2
+[root@caishu-rhel7 ~]# docker info
+Containers: 2
+Images: 72
+Storage Driver: devicemapper
+ Pool Name: docker-253:0-2041800-pool
+ Data file: /var/lib/docker/devicemapper/devicemapper/data
+ Metadata file: /var/lib/docker/devicemapper/devicemapper/metadata
+ Data Space Used: 3492.2 Mb
+ Data Space Total: 102400.0 Mb
+ Metadata Space Used: 4.0 Mb
+ Metadata Space Total: 2048.0 Mb
+Execution Driver: native-0.2
+Kernel Version: 3.10.0-123.8.1.el7.x86_64
+						</code>
+					</pre>
+				</section>
+				<section>
+					<h2 style="margin-left: -100px; margin-bottom: 10px">性能的几个方面</h2>
+					<ul style="margin-top:40px;">
+						<li>CPU ： cpu.shares, cpuset</li>
+						<li>MEM</li>
+						<li>DISK : --volumn, </li>
+						<li>Network : --net=host</li>
+					</ul>
+				</section>
+				<section>
+					<h2 style="margin-left: -100px; margin-bottom: 10px">恰当使用</h2>
+					<ul style="margin-top:40px;">
+					<li>灵活性
+						<ul>
+							<li>软件分发</li>
+							<li>环境部署与迁移</li>
+						</ul>
+					</li>
+					<li>高性能
+						<ul>
+							<li>大量同构应用的密集部署</li>
+							<li>重计算，轻端口</li>
+						</ul>
+					</li>
+					</ul>
+				</section>
+				<section>
+					<h2 style="margin-left: -100px; margin-bottom: 10px">tuna/tuned/tuned-adm</h2>
+					<img style="max-height:600px;border:none;" src="tuna.png"/>
+				</section>
+				<section>
+					<h2 style="margin-left: -100px; margin-bottom: 10px">对比KVM和Docker</h2>
+					<ul style="margin-top:40px;">
+					<li>KVM
+						<ul>
+							<li>不同的内核</li>
+							<li>动态迁移</li>
+							<li>虚机互操作相对复杂</li>
+						</ul>
+					</li>
+					<li>Docker
+						<ul>
+							<li>占用资源少，可以实现更高密度</li>
+							<li>可以共享资源，方便升级</li>
+						</ul>
+					</li>
+					</ul>
+				</section>
+				<section>
+					<h2 style="margin-left: -100px; margin-bottom: 10px">概念和工具</h2>
+					<a href="docker-on-rhel7.png" target="_new"><img style="max-height:600px;border:none;" src="docker-on-rhel7.png"/></a>
+				</section>
+				<section>
+					<h2 style="margin-left: -100px; margin-bottom: 10px">参考材料</h2>
+					<h4 style="padding-top:40px; text-align:left;">致谢：Jeremy Eder和我的同事们</h4>
+					<p style="text-align:left;font-size:0.7em;line-height:160%;">
+						<a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Resource_Management_and_Linux_Containers_Guide/index.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Resource_Management_and_Linux_Containers_Guide/index.html</a><br/>
+						<a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Performance_Tuning_Guide/index.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Performance_Tuning_Guide/index.html</a><br/>
+						<a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/index.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/index.html</a><br/>
+						<a href="https://access.redhat.com/articles/881893">https://access.redhat.com/articles/881893</a><br/>
+						<a href="http://redhat.slides.com/jeremyeder/performance-analysis-of-docker">http://redhat.slides.com/jeremyeder/performance-analysis-of-docker</a><br/>
+						<a href="https://developerblog.redhat.com/2014/08/19/performance-analysis-docker-red-hat-enterprise-linux-7">https://developerblog.redhat.com/2014/08/19/performance-analysis-docker-red-hat-enterprise-linux-7</a><br/>
+					</p>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.min.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				slideNumber: true,
+				history: true,
+				center: true,
+				fragments: true,
+				width: '90%',
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'page', // default/cube/page/concave/zoom/linear/fade/none
+				transitionSpeed: 'slow',
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
